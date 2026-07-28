@@ -27,6 +27,15 @@ jobs:
       - name: Generate Android platform files
         run: flutter create . --org in.ngie --project-name ngie_vas_app --platforms=android
 
+      - name: Bump Kotlin Gradle plugin
+        run: |
+          for f in android/settings.gradle android/settings.gradle.kts; do
+            [ -f "$f" ] && sed -i -E 's/(org\.jetbrains\.kotlin\.android"?\)? version )"[0-9.]+"/\1"2.1.0"/' "$f"
+          done
+          [ -f android/build.gradle ] && sed -i -E "s/ext\.kotlin_version = '[0-9.]+'/ext.kotlin_version = '2.1.0'/" android/build.gradle
+          echo "----- settings.gradle -----"
+          cat android/settings.gradle 2>/dev/null || cat android/settings.gradle.kts 2>/dev/null
+
       - name: Add INTERNET permission
         run: |
           MANIFEST=android/app/src/main/AndroidManifest.xml
